@@ -26,13 +26,13 @@ RSS_SOURCES = [
         "name": "Treasury Press Releases",
         "category": "federal",
         "description": "U.S. Treasury Department press releases RSS feed",
-        "url": "https://home.treasury.gov/system/files/126/treasury-press-releases.xml",
+        "url": "https://home.treasury.gov/news/press-releases/rss.xml",
     },
     {
         "name": "SBA News RSS",
         "category": "federal",
         "description": "U.S. Small Business Administration news feed",
-        "url": "https://www.sba.gov/rss/news.xml",
+        "url": "https://www.sba.gov/rss.xml",
     },
     {
         "name": "GovInfo – SSBCI",
@@ -48,7 +48,7 @@ SCRAPE_SOURCES = [
         "name": "Treasury SSBCI Official Page",
         "category": "federal",
         "description": "Official U.S. Treasury SSBCI program page – news & announcements section",
-        "url": "https://home.treasury.gov/policy-issues/small-business-programs/state-small-business-credit-initiative",
+        "url": "https://home.treasury.gov/policy-issues/small-business-programs/state-small-business-credit-initiative-ssbci",
     },
 ]
 
