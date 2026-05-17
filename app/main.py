@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .database import SessionLocal, engine
 from .models import Base
@@ -56,6 +57,13 @@ app = FastAPI(
     ),
     version="1.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(news_router.router)
