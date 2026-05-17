@@ -1,0 +1,230 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-05-17T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v10.0.0",
+  "resources": [
+    {
+      "_id": "wrk_ssbci001",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "SSBCI News API",
+      "description": "U.S. Treasury State Small Business Credit Initiative news aggregation API",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_ssbci001",
+      "_type": "environment",
+      "parentId": "wrk_ssbci001",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8000"
+      },
+      "color": null,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parentId": "wrk_ssbci001",
+      "name": "Health",
+      "description": ""
+    },
+    {
+      "_id": "fld_news",
+      "_type": "request_group",
+      "parentId": "wrk_ssbci001",
+      "name": "News",
+      "description": ""
+    },
+    {
+      "_id": "fld_collect",
+      "_type": "request_group",
+      "parentId": "wrk_ssbci001",
+      "name": "Collection",
+      "description": ""
+    },
+    {
+      "_id": "req_root",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "Service Info",
+      "method": "GET",
+      "url": "{{ _.base_url }}/",
+      "description": "Returns service name, version, and available endpoints",
+      "headers": [],
+      "parameters": [],
+      "body": {}
+    },
+    {
+      "_id": "req_health",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "{{ _.base_url }}/health",
+      "description": "Simple liveness check — returns {\"status\": \"ok\"}",
+      "headers": [],
+      "parameters": [],
+      "body": {}
+    },
+    {
+      "_id": "req_news_list",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "List News (paginated)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news",
+      "description": "Returns all articles, newest first. Adjust page and page_size as needed.",
+      "headers": [],
+      "parameters": [
+        { "name": "page", "value": "1", "disabled": false },
+        { "name": "page_size", "value": "10", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_search",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Search News",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news",
+      "description": "Full-text search across title, summary, and content.",
+      "headers": [],
+      "parameters": [
+        { "name": "q", "value": "venture capital", "disabled": false },
+        { "name": "page_size", "value": "10", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_federal",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Filter – Federal Sources Only",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news",
+      "description": "Returns only articles from federal sources (Treasury, Federal Register, SBA).",
+      "headers": [],
+      "parameters": [
+        { "name": "category", "value": "federal", "disabled": false },
+        { "name": "page_size", "value": "20", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_media",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Filter – Media Sources Only",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news",
+      "description": "Returns only articles sourced from news media (Google News).",
+      "headers": [],
+      "parameters": [
+        { "name": "category", "value": "media", "disabled": false },
+        { "name": "page_size", "value": "20", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_daterange",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Filter – Date Range (2023)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news",
+      "description": "Returns articles published in 2023.",
+      "headers": [],
+      "parameters": [
+        { "name": "from_date", "value": "2023-01-01T00:00:00", "disabled": false },
+        { "name": "to_date", "value": "2023-12-31T23:59:59", "disabled": false },
+        { "name": "page_size", "value": "20", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_combined",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Combined – Search + Category + Date",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news",
+      "description": "Example combining search text, category filter, and date range.",
+      "headers": [],
+      "parameters": [
+        { "name": "q", "value": "capital", "disabled": false },
+        { "name": "category", "value": "federal", "disabled": false },
+        { "name": "from_date", "value": "2022-01-01T00:00:00", "disabled": false },
+        { "name": "page", "value": "1", "disabled": false },
+        { "name": "page_size", "value": "10", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_latest",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Latest Articles",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news/latest",
+      "description": "Returns the 10 most recently collected articles.",
+      "headers": [],
+      "parameters": [
+        { "name": "limit", "value": "10", "disabled": false }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_news_sources",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "List Sources",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news/sources",
+      "description": "Returns all configured news sources with name, category, description, and URL.",
+      "headers": [],
+      "parameters": [],
+      "body": {}
+    },
+    {
+      "_id": "req_news_stats",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Stats",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news/stats",
+      "description": "Article counts broken down by source and category, plus last collection timestamp.",
+      "headers": [],
+      "parameters": [],
+      "body": {}
+    },
+    {
+      "_id": "req_news_detail",
+      "_type": "request",
+      "parentId": "fld_news",
+      "name": "Article Detail (by ID)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/news/1",
+      "description": "Fetch full detail for a single article. Change the ID in the URL as needed.",
+      "headers": [],
+      "parameters": [],
+      "body": {}
+    },
+    {
+      "_id": "req_collect",
+      "_type": "request",
+      "parentId": "fld_collect",
+      "name": "Trigger Collection",
+      "method": "POST",
+      "url": "{{ _.base_url }}/news/collect",
+      "description": "Triggers an immediate collection run across all 7 sources. Returns new article count and any per-source errors.",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "parameters": [],
+      "body": {}
+    }
+  ]
+}
