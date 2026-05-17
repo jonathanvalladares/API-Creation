@@ -6,7 +6,7 @@ from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from ..collectors.aggregator import run_collection
-from ..collectors.sources import RSS_SOURCES, SCRAPE_SOURCES
+from ..collectors.sources import RSS_SOURCES, SCRAPE_SOURCES, STATIC_ARTICLES
 from ..database import get_db
 from ..models import NewsArticle
 from ..schemas import Article, ArticleDetail, CollectResponse, NewsResponse, SourceInfo
@@ -79,6 +79,8 @@ def list_sources():
         sources.append(SourceInfo(name=s["name"], category=s["category"], description=s["description"], url=s["url"]))
     for s in SCRAPE_SOURCES:
         sources.append(SourceInfo(name=s["name"], category=s["category"], description=s["description"], url=s["url"]))
+    for s in STATIC_ARTICLES:
+        sources.append(SourceInfo(name=s["title"], category=s["source_category"], description=s.get("summary", ""), url=s["url"]))
     return sources
 
 

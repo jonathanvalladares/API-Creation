@@ -56,7 +56,9 @@ def run_collection(db: Session) -> Tuple[int, int, List[str]]:
     all_articles.extend(treasury_articles)
     all_errors.extend(treasury_errors)
 
-    from .sources import RSS_SOURCES, SCRAPE_SOURCES
+    from .sources import RSS_SOURCES, SCRAPE_SOURCES, STATIC_ARTICLES
+    for s in STATIC_ARTICLES:
+        all_articles.append(ArticleCreate(**s))
     sources_queried = len(RSS_SOURCES) + len(SCRAPE_SOURCES)
 
     saved = _save_articles(db, all_articles)

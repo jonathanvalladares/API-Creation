@@ -412,7 +412,7 @@
     <div id="tab-collect" style="display:none">
       <div class="collect-box">
         <h2>Trigger Collection</h2>
-        <p>Runs all 7 collectors immediately and saves new articles. The API also runs this automatically every 6 hours.</p>
+        <p>Runs all collectors immediately — 6 RSS feeds, 4 Treasury pages, and 5 static documents — and saves any new articles. Also runs automatically every 6 hours.</p>
         <button class="btn btn-primary" id="collectBtn" onclick="triggerCollect()">Run Collection Now</button>
         <div id="collectResult"></div>
       </div>
@@ -509,11 +509,16 @@
       return;
     }
 
-    list.innerHTML = d.articles.map(a => `
+    list.innerHTML = d.articles.map(a => {
+      const isPdf = a.url && a.url.toLowerCase().endsWith('.pdf');
+      return `
       <div class="article-card" onclick="openArticle(${a.id})">
         <div class="card-top">
-          <div>
-            <div class="card-title"><a href="${a.url}" target="_blank" onclick="e=>e.stopPropagation()">${escHtml(a.title)}</a></div>
+          <div style="flex:1">
+            <div class="card-title">
+              ${isPdf ? '<span style="background:#78350f33;border:1px solid #92400e55;color:#fbbf24;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700;margin-right:6px">PDF</span>' : ''}
+              <a href="${a.url}" target="_blank" onclick="event.stopPropagation()">${escHtml(a.title)}</a>
+            </div>
             <div class="card-meta">
               <span class="chip ${a.source_category || ''}">${escHtml(a.source_category || 'unknown')}</span>
               <span>${escHtml(a.source)}</span>
@@ -525,7 +530,7 @@
         ${a.summary ? `<div class="card-summary">${escHtml(a.summary.slice(0, 220))}${a.summary.length > 220 ? '…' : ''}</div>` : ''}
         ${a.tags ? `<div class="tags">${a.tags.split(',').map(t => `<span class="tag">${escHtml(t.trim())}</span>`).join('')}</div>` : ''}
       </div>
-    `).join('');
+    `}).join('');
 
     const summary = `${d.total.toLocaleString()} article${d.total !== 1 ? 's' : ''} · page ${currentPage} of ${totalPages}`;
     const indicator = `${currentPage} / ${totalPages}`;
@@ -588,19 +593,31 @@
     try {
       const r = await fetch(`${base()}/news/sources`);
       const sources = await r.json();
-      const icons = { federal: '🏛️', media: '📰', state: '🏢' };
-      el.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px">` +
-        sources.map(s => `
-          <div class="source-card">
-            <div class="source-icon ${s.category}">${icons[s.category] || '📡'}</div>
-            <div>
-              <div class="source-name">${escHtml(s.name)}</div>
-              <div class="source-desc">${escHtml(s.description)}</div>
-              <div class="source-url"><a href="${s.url}" target="_blank">${escHtml(s.url)}</a></div>
-            </div>
-            <span class="chip ${s.category}" style="margin-left:auto;flex-shrink:0">${s.category}</span>
+      const icons = { federal: '🏛️', media: '📰', state: '🏢', pdf: '📄' };
+      const groups = { 'RSS Feeds': [], 'Treasury Pages': [], 'Documents': [] };
+      sources.forEach(s => {
+        if (s.url.endsWith('.pdf')) groups['Documents'].push(s);
+        else if (s.url.includes('treasury.gov') || s.url.includes('federalregister') || s.url.includes('sba.gov') || s.url.includes('govinfo')) groups['Treasury Pages'].push(s);
+        else groups['RSS Feeds'].push(s);
+      });
+      el.innerHTML = Object.entries(groups).filter(([,arr]) => arr.length).map(([group, arr]) => `
+        <div style="margin-bottom:20px">
+          <div class="section-label" style="margin-bottom:10px">${group} (${arr.length})</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            ${arr.map(s => `
+              <div class="source-card">
+                <div class="source-icon ${s.url.endsWith('.pdf') ? 'federal' : s.category}">${s.url.endsWith('.pdf') ? '📄' : icons[s.category] || '📡'}</div>
+                <div style="flex:1;min-width:0">
+                  <div class="source-name">${escHtml(s.name)}</div>
+                  <div class="source-desc">${escHtml(s.description)}</div>
+                  <div class="source-url"><a href="${s.url}" target="_blank">${escHtml(s.url)}</a></div>
+                </div>
+                <span class="chip ${s.category}" style="flex-shrink:0">${s.url.endsWith('.pdf') ? 'document' : s.category}</span>
+              </div>
+            `).join('')}
           </div>
-        `).join('') + `</div>`;
+        </div>
+      `).join('');
     } catch {
       el.innerHTML = '<div class="empty">Could not load sources.</div>';
     }
